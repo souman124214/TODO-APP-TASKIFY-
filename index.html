@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Taskify | Dashboard</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="{{ url_for('static', filename='script.js') }}"
+    defer></script>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <h2 class="logo">✦ Taskify</h2>
+
+        <p class="menu-title">MENU</p>
+
+        <a href="/" class="nav-link active">🏠 Dashboard</a>
+        <a href="#tasks" class="nav-link">📋 My Tasks</a>
+        <a href="#add-task" class="nav-link">➕ Add Task</a>
+
+        <div class="sidebar-bottom">
+            <a href="#" class="nav-link" onclick="toggleDarkMode(); return false;">
+                🌙 Dark Mode
+            </a>
+
+            <a href="/logout" class="nav-link logout">
+                🚪 Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <h1>Dashboard</h1>
+                <p>Manage your daily activities</p>
+            </div>
+
+            <div class="profile">
+                <div class="avatar">
+                    {{ username[0]|upper }}
+                </div>
+
+                <span>{{ username }}</span>
+            </div>
+
+        </header>
+
+
+        <!-- WELCOME -->
+        <section class="welcome">
+
+            <div>
+                <h2>Hello, {{ username }}! 👋</h2>
+                <p>Let's make today productive.</p>
+            </div>
+
+            <div class="welcome-icon">🚀</div>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+        <section class="stats">
+
+            <div class="stat-card purple">
+                <h3>Total Tasks</h3>
+                <h1>{{ stats.total or 0 }}</h1>
+                <p>All your tasks</p>
+            </div>
+
+            <div class="stat-card green">
+                <h3>Completed</h3>
+                <h1>{{ stats.completed or 0 }}</h1>
+                <p>Successfully finished</p>
+            </div>
+
+            <div class="stat-card orange">
+                <h3>Pending</h3>
+                <h1>{{ stats.pending or 0 }}</h1>
+                <p>Remaining tasks</p>
+            </div>
+
+        </section>
+
+
+        <!-- ADD TASK -->
+        <section class="task-section" id="add-task">
+
+            <h2>Create New Task</h2>
+
+            <form action="/add" method="POST" class="task-form">
+
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="What do you need to do?"
+                    required
+                >
+
+                <select name="priority">
+
+                    <option value="High">High Priority</option>
+                    <option value="Medium" selected>Medium Priority</option>
+                    <option value="Low">Low Priority</option>
+
+                </select>
+
+                <select name="category">
+
+                    <option value="College">College</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Project">Project</option>
+
+                </select>
+
+                <input
+                    type="date"
+                    name="due_date"
+                    min="{{ today }}"
+                >
+
+                <button type="submit">+ Add Task</button>
+
+            </form>
+
+        </section>
+
+
+        <!-- TASK LIST -->
+        <section class="task-section" id="tasks">
+
+            <div class="task-heading">
+
+                <h2>My Tasks</h2>
+
+                <form action="/" method="GET" class="search-form">
+
+                    <input
+                        type="search"
+                        name="search"
+                        placeholder="Search tasks..."
+                        value="{{ search }}"
+                    >
+
+                    <select name="category" onchange="this.form.submit()">
+
+                        <option value="">All Categories</option>
+
+                        <option value="College"
+                        {% if category == 'College' %}selected{% endif %}>
+                            College
+                        </option>
+
+                        <option value="Personal"
+                        {% if category == 'Personal' %}selected{% endif %}>
+                            Personal
+                        </option>
+
+                        <option value="Project"
+                        {% if category == 'Project' %}selected{% endif %}>
+                            Project
+                        </option>
+
+                    </select>
+
+                    <button type="submit">Search</button>
+
+                </form>
+
+            </div>
+
+
+            <div class="task-list">
+
+                {% for task in tasks %}
+
+                <div class="task-card">
+
+                    <div class="task-info">
+
+                        <h3 class="{% if task.completed %}completed{% endif %}">
+                            {{ task.title }}
+                        </h3>
+
+                        <div class="task-meta">
+
+                            <span class="priority {{ task.priority|lower }}">
+                                {{ task.priority }}
+                            </span>
+
+                            <span class="category">
+                                {{ task.category }}
+                            </span>
+
+                            {% if task.due_date %}
+                            <span class="due-date">
+                                📅 {{ task.due_date }}
+                            </span>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="task-actions">
+
+                        <form action="/complete/{{ task.id }}" method="POST">
+
+                            <button type="submit" class="complete-btn">
+                                {% if task.completed %}
+                                    ↩
+                                {% else %}
+                                    ✓
+                                {% endif %}
+                            </button>
+
+                        </form>
+
+                        <form action="/delete/{{ task.id }}" method="POST"
+                        onsubmit="return confirm('Delete this task?')">
+
+                            <button type="submit" class="delete-btn">
+                                ✕
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <h2>📝</h2>
+
+                    <h3>No tasks found!</h3>
+
+                    <p>Add your first task and start being productive.</p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer>
+            <p>© 2026 Taskify | Stay Focused. Stay Productive.</p>
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>
