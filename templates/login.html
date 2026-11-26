@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskify | Login</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+
+    <div class="auth-container">
+
+        <div class="auth-left">
+            <h1>Taskify<span>.</span></h1>
+            <h2>Organize your day,<br> achieve your goals.</h2>
+            <p>Manage your tasks, track your progress and make every day productive.</p>
+
+            <div class="auth-decoration">
+                <div class="decoration-circle"></div>
+                <div class="decoration-circle small"></div>
+            </div>
+        </div>
+
+        <div class="auth-right">
+
+            <div class="auth-form-container">
+
+                <h2>Welcome Back! 👋</h2>
+                <p class="auth-subtitle">Please login to your account.</p>
+
+                <form method="POST" action="{{ url_for('login') }}">
+
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Enter your username"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="auth-button">
+                        Login
+                    </button>
+
+                </form>
+
+                <p class="auth-switch">
+                    Don't have an account?
+                    <a href="{{ url_for('register') }}">Create Account</a>
+                </p>
+
+                <div class="auth-footer">
+                    © 2026 Taskify. All rights reserved.
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
